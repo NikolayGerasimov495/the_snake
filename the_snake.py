@@ -161,7 +161,6 @@ def handle_keys(game_object):
 
 def main():
     """Main function"""
-
     apple = Apple()
     snake = Snake()
 

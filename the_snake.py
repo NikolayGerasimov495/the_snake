@@ -27,13 +27,13 @@ RIGHT: tuple = (1, 0)
 SPEED: int = 15
 
 # Setting up the game window
-screen: pygame.surface = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), 0, 32)
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), 0, 32)
 
 # Title of the playing field window
 pygame.display.set_caption("Змейка")
 
 # Time setting
-clock: pygame.time = pygame.time.Clock()
+clock = pygame.time.Clock()
 
 
 class GameObject:
@@ -65,7 +65,11 @@ class Apple(GameObject):
 
     def draw(self, surface):
         """Method to draw the Apple object"""
-        rect = pygame.Rect((self.position[0], self.position[1]), (GRID_SIZE, GRID_SIZE))
+        rect = (
+            pygame.Rect(
+                (self.position[0], self.position[1]),
+                (GRID_SIZE, GRID_SIZE))
+        )
         pygame.draw.rect(surface, self.body_color, rect)
         pygame.draw.rect(surface, AQUAMARINE_CRAYOLA, rect, 1)
 
@@ -91,7 +95,10 @@ class Snake(GameObject):
     def draw(self, surface):
         """Method to draw the Snake object"""
         for position in self.positions[:-1]:
-            rect = pygame.Rect((position[0], position[1]), (GRID_SIZE, GRID_SIZE))
+            rect = pygame.Rect(
+                (position[0], position[1]),
+                (GRID_SIZE, GRID_SIZE)
+            )
             pygame.draw.rect(surface, self.body_color, rect)
             pygame.draw.rect(surface, AQUAMARINE_CRAYOLA, rect, 1)
 
@@ -128,7 +135,7 @@ class Snake(GameObject):
         return self.positions[0]
 
     def reset(self):
-        """Returns the snake to its original state after colliding with itself"""
+        """Returns the snake to its original state"""
         self.length = 1
         self.positions = [((SCREEN_WIDTH // 2), (SCREEN_HEIGHT // 2))]
         self.direction = choice([UP, DOWN, LEFT, RIGHT])

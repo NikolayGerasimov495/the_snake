@@ -45,7 +45,16 @@ class GameObject:
 
     def draw(self):
         """Method for drawing an object. Redefined in the subclasses"""
-        pass
+        raise NotImplementedError(
+            'Implement the "draw" method of the "GameObject" class'
+        )
+
+    def draw_cell(self, surface, *args):
+        """"""
+        rect = pygame.Rect((self.position[0], self.position[1]),
+                           (GRID_SIZE, GRID_SIZE))
+        pygame.draw.rect(surface, self.body_color, rect)
+        pygame.draw.rect(surface, AQUAMARINE_CRAYOLA, rect, 1)
 
 
 class Apple(GameObject):
@@ -63,28 +72,20 @@ class Apple(GameObject):
             randint(0, GRID_HEIGHT - 1) * GRID_SIZE,
         )
 
-    def draw(self, surface):
+    def draw_cell(self, surface, *args):
         """Method to draw the Apple object"""
-        rect = (
-            pygame.Rect(
-                (self.position[0], self.position[1]),
-                (GRID_SIZE, GRID_SIZE))
-        )
-        pygame.draw.rect(surface, self.body_color, rect)
-        pygame.draw.rect(surface, AQUAMARINE_CRAYOLA, rect, 1)
+        super().draw_cell(surface)
 
 
 class Snake(GameObject):
     """A class for representing a snake"""
 
-    def __init__(self, body_color=SNAKE_COLOR) -> None:
+    def __init__(self, body_color=SNAKE_COLOR):
         super().__init__()
-        self.length: int = 1
-        self.positions = [((SCREEN_WIDTH // 2), (SCREEN_HEIGHT // 2))]
-        self.direction = RIGHT
         self.next_direction = None
         self.body_color = body_color
         self.last = None
+        self.reset()
 
     def update_direction(self):
         """# The method of updating the direction after pressing the button"""
@@ -92,26 +93,20 @@ class Snake(GameObject):
             self.direction = self.next_direction
             self.next_direction = None
 
-    def draw(self, surface):
+    def draw_cell(self, surface, *args):
         """Method to draw the Snake object"""
-        for position in self.positions[:-1]:
-            rect = pygame.Rect(
-                (position[0], position[1]),
-                (GRID_SIZE, GRID_SIZE)
-            )
-            pygame.draw.rect(surface, self.body_color, rect)
-            pygame.draw.rect(surface, AQUAMARINE_CRAYOLA, rect, 1)
+        for self.position in self.positions[:-1]:
+            super().draw_cell(surface, self.position)
 
         """Drawing the snake's head"""
-        head = self.positions[0]
-        head_rect = pygame.Rect((head[0], head[1]), (GRID_SIZE, GRID_SIZE))
-        pygame.draw.rect(surface, self.body_color, head_rect)
-        pygame.draw.rect(surface, AQUAMARINE_CRAYOLA, head_rect, 1)
+        for self.position in self.positions:
+            super().draw_cell(surface, self.position[0])
 
         """Overwrite the last segment"""
         if self.last:
             last_rect = pygame.Rect(
-                (self.last[0], self.last[1]), (GRID_SIZE, GRID_SIZE)
+                (self.last[0], self.last[1]),
+                (GRID_SIZE, GRID_SIZE)
             )
             pygame.draw.rect(surface, BOARD_BACKGROUND_COLOR, last_rect)
 
@@ -151,12 +146,16 @@ def handle_keys(game_object):
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_UP and game_object.direction != DOWN:
                 game_object.next_direction = UP
+                game_object.update_direction()
             elif event.key == pygame.K_DOWN and game_object.direction != UP:
                 game_object.next_direction = DOWN
+                game_object.update_direction()
             elif event.key == pygame.K_LEFT and game_object.direction != RIGHT:
                 game_object.next_direction = LEFT
+                game_object.update_direction()
             elif event.key == pygame.K_RIGHT and game_object.direction != LEFT:
                 game_object.next_direction = RIGHT
+                game_object.update_direction()
 
 
 def main():
@@ -169,8 +168,8 @@ def main():
 
         handle_keys(snake)
         snake.update_direction()
-        apple.draw(screen)
-        snake.draw(screen)
+        apple.draw_cell(screen)
+        snake.draw_cell(screen)
         snake.move()
         if snake.get_head_position() == apple.position:
             snake.length += 1

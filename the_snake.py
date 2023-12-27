@@ -43,6 +43,12 @@ class GameObject:
         self.position = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
         self.body_color = body_color
 
+    def draw(self):
+        """Method to draw a GameObject"""
+        raise NotImplementedError(
+            'Please implement "draw_cell" method of "GameObject" class.'
+        )
+
     def draw_cell(self, surface, *args):
         """Method for drawing an object. Redefined in the subclasses"""
         rect = pygame.Rect((self.position[0], self.position[1]),

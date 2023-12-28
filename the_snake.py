@@ -72,10 +72,6 @@ class Apple(GameObject):
             randint(0, GRID_HEIGHT - 1) * GRID_SIZE,
         )
 
-    def draw_cell(self, surface, *args):
-        """Method to draw the Apple object"""
-        super().draw_cell(surface)
-
 
 class Snake(GameObject):
     """A class for representing a snake"""
